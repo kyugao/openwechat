@@ -61,20 +61,12 @@ func RegisterSecret(s ...Secret) error {
 	return nil
 }
 
-func DeleteSecret(app_id string) {
-	secretLst.Delete(app_id)
-}
-
-func getSecret(appid string) Secret {
-	if v, ok := secretLst.Load(appid); !ok || v == nil {
+func getSecret(app_id string) Secret {
+	if v, ok := secretLst.Load(app_id); !ok || v == nil {
 		return Secret{}
 	} else {
 		return v.(Secret)
 	}
-}
-
-func init() {
-	secretLst = sync.Map{}
 }
 
 //公共请求参数

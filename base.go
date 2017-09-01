@@ -102,13 +102,7 @@ type ApiHander interface {
 	apiMethod() string
 }
 
-var (
-	apiRegistry map[string]WechatApi
-)
-
-func init() {
-	apiRegistry = map[string]WechatApi{}
-}
+var apiRegistry map[string]WechatApi = map[string]WechatApi{}
 
 func registerApi(handler ApiHander) {
 	apiRegistry[handler.apiUrl()] = WechatApi{

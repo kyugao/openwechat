@@ -6,7 +6,7 @@
 ** ===============================================
  */
 
-package w
+package openwechat
 
 import (
 	"errors"

@@ -28,7 +28,7 @@ type Response struct {
 	ErrMsg  string `json:"errmsg,omitempty"`
 }
 
-type WechatApi struct {
+type wechatApi struct {
 	//公众账号ID
 	app_id string
 	//保留秘钥参数.留作签名和验证签名使用.
@@ -37,7 +37,7 @@ type WechatApi struct {
 	req reqInterface
 }
 
-func (w *WechatApi) SetAppId(app_id string) error {
+func (w *wechatApi) SetAppId(app_id string) error {
 	w.app_id = app_id
 	if len(w.app_id) == 0 {
 		return errors.New("app_id can not be nil")
@@ -54,7 +54,7 @@ func (w *WechatApi) SetAppId(app_id string) error {
 /**
 设置请求内容..
 */
-func (w *WechatApi) SetReqContent(v reqInterface) error {
+func (w *wechatApi) SetReqContent(v reqInterface) error {
 	if err := v.valid(); err != nil {
 		return err
 	}
@@ -62,7 +62,7 @@ func (w *WechatApi) SetReqContent(v reqInterface) error {
 	return nil
 }
 
-func (w *WechatApi) toMap() map[string]interface{} {
+func (w *wechatApi) toMap() map[string]interface{} {
 	var data = make(map[string]interface{})
 
 	t := reflect.TypeOf(w.req)
@@ -86,7 +86,7 @@ func (w *WechatApi) toMap() map[string]interface{} {
 	return data
 }
 
-func (w *WechatApi) toXml(input map[string]interface{}) (xml string) {
+func (w *wechatApi) toXml(input map[string]interface{}) (xml string) {
 	xml = "<xml>"
 	for k, v := range input {
 		value := fmt.Sprintf("%v", input[k])
@@ -105,7 +105,7 @@ func (w *WechatApi) toXml(input map[string]interface{}) (xml string) {
 	return
 }
 
-func (w *WechatApi) marshalXML(input string) map[string]interface{} {
+func (w *wechatApi) marshalXML(input string) map[string]interface{} {
 	m := map[string]interface{}{}
 	var t xml.Token
 	var err error
@@ -140,7 +140,7 @@ func (w *WechatApi) marshalXML(input string) map[string]interface{} {
 /**
 做签名
 */
-func (w *WechatApi) doSign(m map[string]interface{}) string {
+func (w *wechatApi) doSign(m map[string]interface{}) string {
 	//对key进行升序排序.
 	sorted_keys := make([]string, 0)
 	for k, _ := range m {
@@ -169,7 +169,7 @@ func (w *WechatApi) doSign(m map[string]interface{}) string {
 }
 
 //微信验证签名
-func (w *WechatApi) verifySign(resp_map map[string]interface{}) (pass bool) {
+func (w *wechatApi) verifySign(resp_map map[string]interface{}) (pass bool) {
 	sorted_keys := make([]string, 0)
 	for k, _ := range resp_map {
 		if k != "sign" {
@@ -200,7 +200,7 @@ func (w *WechatApi) verifySign(resp_map map[string]interface{}) (pass bool) {
 	return
 }
 
-func (w *WechatApi) request(link string) ([]byte, error) {
+func (w *wechatApi) request(link string) ([]byte, error) {
 	//struct 转 map
 	m := w.toMap()
 	m["nonce_str"] = tools.RandomNumeric(32)

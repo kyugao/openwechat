@@ -9,7 +9,12 @@
 package openwechat
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
+
+	"github.com/liteck/logs"
+	"github.com/liteck/tools/httplib"
 )
 
 /**
@@ -33,28 +38,51 @@ func OpenWebAuth(app_id, scope, redirect_uri string) string {
 }
 
 //通过授权回调之后的 code 换取 access_token
-type api_wechat_sns_oauth2_access_token struct {
-	WechatApi
+type Api_wechat_sns_oauth2_access_token struct {
+	wechatApi
 }
 
-func (o *api_wechat_sns_oauth2_access_token) apiUrl() string {
+func (a *Api_wechat_sns_oauth2_access_token) apiUrl() string {
 	return "https://api.weixin.qq.com/sns/oauth2/access_token"
 }
 
-func (o *api_wechat_sns_oauth2_access_token) apiName() string {
-	return "通过code获取access_token的接口"
-}
+func (a *Api_wechat_sns_oauth2_access_token) Run(resp *Resp_api_wechat_sns_oauth2_access_token) error {
+	m := a.toMap()
+	m["appid"] = a.app_id
+	m["secret"] = a.secret.AppSecret
 
-func (o *api_wechat_sns_oauth2_access_token) apiMethod() string {
-	return "GET"
+	http_request := httplib.Get(a.apiUrl())
+	tmp_string := ""
+	for k, v := range m {
+		value := fmt.Sprintf("%v", v)
+		if value != "" {
+			http_request.Param(k, value)
+			tmp_string = tmp_string + k + "=" + value + "\t"
+		}
+	}
+	logs.Debug(fmt.Sprintf("==[request params]==[%s,%s]", a.apiUrl(), tmp_string))
+	if v, err := http_request.Bytes(); err != nil {
+		return err
+	} else if err := json.Unmarshal(v, resp); err != nil {
+		return err
+	} else {
+		logs.Debug(string(v))
+	}
+
+	return nil
 }
 
 type Req_api_wechat_sns_oauth2_access_token struct {
+	Appid     string `json:"appid"`
+	Secret    string `json:"secret"`
 	Code      string `json:"code"`
 	GrantType string `json:"grant_type"`
 }
 
 func (p Req_api_wechat_sns_oauth2_access_token) valid() error {
+	if len(p.Appid) == 0 {
+		return errors.New("appid can not be nil")
+	}
 	if len(p.GrantType) == 0 {
 		return errors.New("grant_type can not be nil")
 	}
@@ -86,20 +114,35 @@ type Resp_api_wechat_sns_oauth2_access_token struct {
 请注意，在用户修改微信头像后，旧的微信头像URL将会失效，
 因此开发者应该自己在获取用户信息后，将头像图片保存下来，避免微信头像URL失效后的异常情况。
 **/
-type api_wechat_sns_userinfo struct {
-	WechatApi
+type Api_wechat_sns_userinfo struct {
+	wechatApi
 }
 
-func (o *api_wechat_sns_userinfo) apiUrl() string {
+func (o *Api_wechat_sns_userinfo) apiUrl() string {
 	return "https://api.weixin.qq.com/sns/userinfo"
 }
 
-func (o *api_wechat_sns_userinfo) apiName() string {
-	return "获取用户个人信息（UnionID机制）"
-}
+func (a *Api_wechat_sns_userinfo) Run(resp *Resp_api_wechat_sns_userinfo) error {
+	m := a.toMap()
+	http_request := httplib.Get(a.apiUrl())
+	tmp_string := ""
+	for k, v := range m {
+		value := fmt.Sprintf("%v", v)
+		if value != "" {
+			http_request.Param(k, value)
+			tmp_string = tmp_string + k + "=" + value + "\t"
+		}
+	}
+	logs.Debug(fmt.Sprintf("==[request params]==[%s,%s]", a.apiUrl(), tmp_string))
+	if v, err := http_request.Bytes(); err != nil {
+		return err
+	} else if err := json.Unmarshal(v, resp); err != nil {
+		return err
+	} else {
+		logs.Debug(string(v))
+	}
 
-func (o *api_wechat_sns_userinfo) apiMethod() string {
-	return "GET"
+	return nil
 }
 
 type Req_api_wechat_sns_userinfo struct {
@@ -130,9 +173,4 @@ type Resp_api_wechat_sns_userinfo struct {
 	HeadimgUrl string `json:"headimgurl,omitempty"`
 	Privilege  string `json:"privilege,omitempty"`
 	UnoinId    string `json:"unionid,omitempty"`
-}
-
-func init() {
-	//registerApi(new(api_wechat_sns_oauth2_access_token))
-	//registerApi(new(api_wechat_sns_userinfo))
 }

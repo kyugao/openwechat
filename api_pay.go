@@ -1,6 +1,7 @@
 package openwechat
 
 import (
+	"encoding/json"
 	"errors"
 )
 
@@ -10,7 +11,7 @@ import (
 //微信在次日9点启动生成前一天的对账单，建议商户10点后再获取；
 //对账单接口只能下载三个月以内的账单。
 type Api_wechat_pay_downloadbill struct {
-	WechatApi
+	wechatApi
 }
 
 func (a *Api_wechat_pay_downloadbill) apiUrl() string {
@@ -22,11 +23,12 @@ func (a *Api_wechat_pay_downloadbill) Run(resp *Resp_api_wechat_pay_downloadbill
 	result := []byte{}
 	if v, err := a.request(a.apiUrl()); err != nil {
 		return err
-	} else {
-		result = v
+	} else if err := json.Unmarshal(v, resp); err != nil {
+		return err
 	}
-
-	resp.Data = result
+	if len(resp.ErrCode) != 0 {
+		resp.Data = result
+	}
 	return nil
 }
 

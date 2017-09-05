@@ -56,10 +56,10 @@ type Req_api_wechat_sns_oauth2_access_token struct {
 
 func (p Req_api_wechat_sns_oauth2_access_token) valid() error {
 	if len(p.GrantType) == 0 {
-		return errors.New("grant_type" + CAN_NOT_NIL)
+		return errors.New("grant_type can not be nil")
 	}
 	if len(p.Code) == 0 {
-		return errors.New("code" + CAN_NOT_NIL)
+		return errors.New("code can not be nil")
 	}
 
 	return nil
@@ -110,10 +110,10 @@ type Req_api_wechat_sns_userinfo struct {
 
 func (p Req_api_wechat_sns_userinfo) valid() error {
 	if len(p.AccessToken) == 0 {
-		return errors.New("access_token" + CAN_NOT_NIL)
+		return errors.New("access_token can not be nil")
 	}
 	if len(p.OpenId) == 0 {
-		return errors.New("openid" + CAN_NOT_NIL)
+		return errors.New("openid can not be nil")
 	}
 
 	return nil
@@ -133,6 +133,6 @@ type Resp_api_wechat_sns_userinfo struct {
 }
 
 func init() {
-	registerApi(new(api_wechat_sns_oauth2_access_token))
-	registerApi(new(api_wechat_sns_userinfo))
+	//registerApi(new(api_wechat_sns_oauth2_access_token))
+	//registerApi(new(api_wechat_sns_userinfo))
 }

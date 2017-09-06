@@ -43,7 +43,7 @@ func (w *wechatApi) SetAppId(app_id string) error {
 		return errors.New("app_id can not be nil")
 	}
 
-	if s := getSecret(app_id); len(s.AppKey) == 0 {
+	if s := getSecret(app_id); len(s.AppKey) == 0 && len(s.AppSecret) == 0 {
 		return errors.New("secret can not be nil")
 	} else {
 		w.secret = s

@@ -80,9 +80,6 @@ type Req_api_wechat_sns_oauth2_access_token struct {
 }
 
 func (p Req_api_wechat_sns_oauth2_access_token) valid() error {
-	if len(p.Appid) == 0 {
-		return errors.New("appid can not be nil")
-	}
 	if len(p.GrantType) == 0 {
 		return errors.New("grant_type can not be nil")
 	}

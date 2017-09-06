@@ -91,7 +91,8 @@ func (p Req_api_wechat_sns_oauth2_access_token) valid() error {
 }
 
 type Resp_api_wechat_sns_oauth2_access_token struct {
-	Response
+	ErrCode      float64 `json:"errcode,omitempty"`
+	ErrMsg       string  `json:"errmsg,omitempty"`
 	AccessToken  string  `json:"access_token,omitempty"`
 	ExpiresIn    float64 `json:"expires_in,omitempty"`
 	RefreshToken string  `json:"refresh_token,omitempty"`
@@ -160,14 +161,15 @@ func (p Req_api_wechat_sns_userinfo) valid() error {
 }
 
 type Resp_api_wechat_sns_userinfo struct {
-	Response
-	OpenId     string `json:"openid,omitempty"`
-	NickName   string `json:"nickname,omitempty"`
-	Sex        string `json:"sex,omitempty"`
-	Province   string `json:"province,omitempty"`
-	City       string `json:"city,omitempty"`
-	Country    string `json:"country,omitempty"`
-	HeadimgUrl string `json:"headimgurl,omitempty"`
-	Privilege  string `json:"privilege,omitempty"`
-	UnoinId    string `json:"unionid,omitempty"`
+	ErrCode    float64 `json:"errcode,omitempty"`
+	ErrMsg     string  `json:"errmsg,omitempty"`
+	OpenId     string  `json:"openid,omitempty"`
+	NickName   string  `json:"nickname,omitempty"`
+	Sex        string  `json:"sex,omitempty"`
+	Province   string  `json:"province,omitempty"`
+	City       string  `json:"city,omitempty"`
+	Country    string  `json:"country,omitempty"`
+	HeadimgUrl string  `json:"headimgurl,omitempty"`
+	Privilege  string  `json:"privilege,omitempty"`
+	UnoinId    string  `json:"unionid,omitempty"`
 }

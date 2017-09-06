@@ -161,15 +161,15 @@ func (p Req_api_wechat_sns_userinfo) valid() error {
 }
 
 type Resp_api_wechat_sns_userinfo struct {
-	ErrCode    float64 `json:"errcode,omitempty"`
-	ErrMsg     string  `json:"errmsg,omitempty"`
-	OpenId     string  `json:"openid,omitempty"`
-	NickName   string  `json:"nickname,omitempty"`
-	Sex        string  `json:"sex,omitempty"`
-	Province   string  `json:"province,omitempty"`
-	City       string  `json:"city,omitempty"`
-	Country    string  `json:"country,omitempty"`
-	HeadimgUrl string  `json:"headimgurl,omitempty"`
-	Privilege  string  `json:"privilege,omitempty"`
-	UnoinId    string  `json:"unionid,omitempty"`
+	ErrCode    float64  `json:"errcode,omitempty"`
+	ErrMsg     string   `json:"errmsg,omitempty"`
+	OpenId     string   `json:"openid,omitempty"`
+	NickName   string   `json:"nickname,omitempty"`
+	Sex        float64  `json:"sex,omitempty"`
+	Province   string   `json:"province,omitempty"`
+	City       string   `json:"city,omitempty"`
+	Country    string   `json:"country,omitempty"`
+	HeadimgUrl string   `json:"headimgurl,omitempty"`
+	Privilege  []string `json:"privilege,omitempty"`
+	UnoinId    string   `json:"unionid,omitempty"`
 }

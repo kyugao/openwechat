@@ -1,10 +1,26 @@
 package openwechat
 
 import (
-	"encoding/json"
 	"errors"
+
+	"encoding/json"
 )
 
+/**
+留着其它接口用
+else if m := a.marshalXML(string(v)); m == nil {
+		return errors.New("response xml data parse error!")
+	} else if d, err := json.Marshal(&m); err != nil {
+		return err
+	} else if err := json.Unmarshal(d, resp); err != nil {
+		return err
+	} else {
+		logs.Debug(resp)
+	}
+
+
+
+*/
 //https://api.mch.weixin.qq.com/pay/downloadbill
 //https://pay.weixin.qq.com/wiki/doc/api/micropay.php?chapter=9_6
 //商户可以通过该接口下载历史交易清单
@@ -22,11 +38,23 @@ func (a *Api_wechat_pay_downloadbill) Run(resp *Resp_api_wechat_pay_downloadbill
 	//准备请求
 	result := []byte{}
 	if v, err := a.request(a.apiUrl()); err != nil {
+		//接口错误.直接返回.
 		return err
-	} else if err := json.Unmarshal(v, resp); err != nil {
-		return err
+	} else if m := a.marshalXML(string(v)); m != nil {
+		//把xml 数据转 map
+		//如果 m 不是 nil.. 表示转换成功...说明返回了 xml 数据..
+		//应该就能表明肯定是失败的..
+		if d, err := json.Marshal(&m); err != nil {
+			return err
+		} else if err := json.Unmarshal(d, resp); err != nil {
+			return err
+		}
+	} else {
+		result = v
 	}
-	if len(resp.ErrCode) != 0 {
+	//那么这里 的数据是对账单数据...直接返回
+	//当这2个没值的时候..才返回数据.
+	if len(resp.ReturnCode) == 0 && len(resp.ErrCode) == 0 {
 		resp.Data = result
 	}
 	return nil

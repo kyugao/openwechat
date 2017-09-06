@@ -24,8 +24,10 @@ type reqInterface interface {
 type responseInterface interface{}
 
 type Response struct {
-	ErrCode string `json:"errcode,omitempty"`
-	ErrMsg  string `json:"errmsg,omitempty"`
+	ReturnCode string `json:"return_code,omitempty"`
+	ReturnMsg  string `json:"return_msg,omitempty"`
+	ErrCode    string `json:"errcode,omitempty"`
+	ErrMsg     string `json:"errmsg,omitempty"`
 }
 
 type wechatApi struct {
@@ -105,7 +107,16 @@ func (w *wechatApi) toXml(input map[string]interface{}) (xml string) {
 	return
 }
 
+/**
+解析 xml 数据到 map 中..
+*/
 func (w *wechatApi) marshalXML(input string) map[string]interface{} {
+	//连<xml>都没有..那算神马 xml 数据..
+	//不加这个.下面的执行完成后.会出现 key 是空的.. input 为 value 的一个 map..
+	if !strings.Contains(input, "<xml>") {
+		return nil
+	}
+
 	m := map[string]interface{}{}
 	var t xml.Token
 	var err error
@@ -203,7 +214,7 @@ func (w *wechatApi) verifySign(resp_map map[string]interface{}) (pass bool) {
 func (w *wechatApi) request(link string) ([]byte, error) {
 	//struct 转 map
 	m := w.toMap()
-	m["nonce_str"] = tools.RandomNumeric(32)
+	m["nonce_str"] = tools.RandomAlphabetic(32)
 	m["appid"] = w.app_id
 	m["sign"] = w.doSign(m)
 
@@ -215,6 +226,7 @@ func (w *wechatApi) request(link string) ([]byte, error) {
 	if v, err := http_request.Bytes(); err != nil {
 		return nil, err
 	} else {
+		//logs.Debug(fmt.Sprintf("==[response data]==%s", string(v)))
 		return v, nil
 	}
 }
